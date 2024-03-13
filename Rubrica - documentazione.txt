@@ -1,0 +1,100 @@
+Rubrica ( host localhost:8080/)
+
+PRIMA DI QUALSIASI DOMANDA, LEGGERE ATTENTAMENTE LA DOCUMENTAZIONE E FARE DEI TEST TRAMITE BROWSER!
+
+	è un servizio, che previa registrazione, permette di gestire la propria rubrica.
+	Tutte le funzioni di questo servizio sono strutturate da ritornare un JSON contenente:
+
+	- status ( "ok" o "error" ) 
+	- result ( se lo status è "ok" ) 
+	- message ( se lo status è "error" ) 
+
+	il result varia in base al tipo di richiesta
+
+
+
+	il servizio presenta le seguenti funzioni:
+	
+	- createToken - permette di registrarsi al servizio con username e password
+		Parametri GET:  
+		- username ( string )  
+		- password ( string ) 
+		
+		
+		se i parametri sono errati o l'utente è già presente viene ritornato un "error" con il relativo messaggio
+
+	- getToken - permette di recuperare il token da utilizzare per le successive richieste
+		Parametri GET:  
+		- username ( string )  
+		- password ( string ) 
+		
+		
+		se i parametri sono errati o user/pass sono sbagliati viene ritornato un "error" con il relativo messaggio
+
+		ATTENZIONE!: ogni qual volta che il token viene generato, il token precedente viene cancellato!
+
+	- addContact - permette di aggiungere un contatto alla rubrica
+		Parametri GET:  
+		- token ( string )  
+		- nome ( string ) 
+		- cognome ( string ) 
+		- numero ( string ) 
+		- gruppo ( string - OPZIONALE -> se il campo non viene messo, il contatto verrà comunque salvato ma non sarà assegnato a nessun gruppo ) 
+		
+		se i parametri sono errati viene ritornato un "error" con il relativo messaggio
+	
+	- deleteContact - permette di cancellare un contatto
+		Parametri GET:  
+		- token ( string ) 
+		- id ( int )  
+		
+		il campo id corrisponde all'id del contatto da cancellare ( vedere getContacts ) 
+		
+		se i parametri sono errati o il contatto non esiste viene ritornato un "error" con il relativo messaggio
+
+	- getGroups - ritorna la lista di tutti i gruppi presenti nella rubrica 
+			( se due contatti hanno lo stesso gruppo, il nome del gruppo comparirà una volta sola in questa lista ) 
+		Parametri GET:  
+		- token ( string )  
+		
+		se i parametri sono errati viene ritornato un "error" con il relativo messaggio
+
+	- getContacts - ritorna la lista di tutti i contatti presenti nella rubrica, con relativo id ( necessario per la cancellazione ) 
+		Parametri GET:  
+		- token ( string )  
+		
+		se i parametri sono errati viene ritornato un "error" con il relativo messaggio
+		
+		
+
+
+test:
+
+localhost:8080/createToken?username=a&password=a
+	registra l'utente "a" con password "a"
+	
+	
+localhost:8080/getToken?username=a&password=a
+	ottiene il token relativo all'utente "a" con pass "a"
+	( immaginiamo -> 3b2a24f945d346a59b1ed950f20a7723 ) 
+	
+localhost:8080/addContact?token=3b2a24f945d346a59b1ed950f20a7723&nome=aaa&cognome=bbb&numero=123456&gruppo=abc			( con gruppo )
+localhost:8080/addContact?token=3b2a24f945d346a59b1ed950f20a7723&nome=aaa&cognome=bbb&numero=123456					( senza gruppo ) 
+	aggiunge un contatto alla rubrica dell'utente relativo al token 
+	il contatto:
+	nome = aaa
+	cognome = bbb
+	numero = 123456
+	
+	gruppo = abc ( parametro opzionale ) 
+		
+localhost:8080/getGroups?token=3b2a24f945d346a59b1ed950f20a7723
+	permette di ottenere la lista di tutti i gruppi nella rubrica
+	
+localhost:8080/getContacts?token=3b2a24f945d346a59b1ed950f20a7723
+	permette di ottenere la lista di tutti i contatti nella rubrica
+	
+localhost:8080/deleteContact?token=3b2a24f945d346a59b1ed950f20a7723&id=50
+	permette di cancellare il contatto con id 50 della rubrica
+	
+
