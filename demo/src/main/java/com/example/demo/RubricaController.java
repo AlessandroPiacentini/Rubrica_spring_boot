@@ -21,7 +21,7 @@ public class RubricaController {
     @GetMapping("/createtoken")
     public Map<String, String> createToken(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) {
         Map<String, String> result = new HashMap<>();
-        Optional<User> existingUser = userRepository.findByUsernameAndPassword(username, password);
+        Optional<User> existingUser = userRepository.findByUsername(username);
         if (existingUser.isPresent()) {
             result.put("result", "utente già esistente");
             result.put("status", "error");
@@ -93,7 +93,7 @@ public class RubricaController {
     @GetMapping("/deleteContact")
     public Map<String, String> deleteContact(@RequestParam("id") Long id, @RequestParam("token") String token) {
         Map<String, String> result = new HashMap<>();
-        Optional<Contact> contact = contactRepository.findByToken(token);
+        Optional<Contact> contact = contactRepository.findByTokenAndId(token, id);
         if (contact.isPresent()) {
             contactRepository.deleteById(id);
             result.put("status", "ok");

@@ -12,6 +12,6 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
     @Query("SELECT DISTINCT group_name FROM Contact")
     List<String> findDistinctGroupName();
 
-    Optional<Contact> findByToken(String token);
+    Optional<Contact> findByTokenAndId(String token, Long id);
 }
 
