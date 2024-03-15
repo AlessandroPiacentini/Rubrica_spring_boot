@@ -23,7 +23,7 @@ public class RubricaController {
         Map<String, String> result = new HashMap<>();
         Optional<User> existingUser = userRepository.findByUsername(username);
         if (existingUser.isPresent()) {
-            result.put("result", "utente già esistente");
+            result.put("message", "utente già esistente");
             result.put("status", "error");
         } else {
             String token = generaStringaAlfanumerica(32);
@@ -66,7 +66,7 @@ public class RubricaController {
 
             result.put("token",token);
         } else {
-            result.put("result", "utente non esistente");
+            result.put("message", "utente non esistente");
             result.put("status", "error");
         }
         return result;
@@ -82,7 +82,7 @@ public class RubricaController {
             result.put("status", "ok");
             result.put("result", "contatto aggiunto");
         } else {
-            result.put("result", "token non valido");
+            result.put("message", "token non valido");
             result.put("status", "error");
         }
         return result;
@@ -96,7 +96,7 @@ public class RubricaController {
             result.put("status", "ok");
             result.put("result", contactRepository.findAll());
         } else {
-            result.put("result", "token non valido");
+            result.put("message", "token non valido");
             result.put("status", "error");
         }
         return result;
@@ -112,7 +112,7 @@ public class RubricaController {
             result.put("status", "ok");
             result.put("result", "contatto eliminato");
         } else {
-            result.put("result", "token non valido");
+            result.put("message", "token non valido");
             result.put("status", "error");
         }
         return result;
@@ -126,7 +126,7 @@ public class RubricaController {
             result.put("status", "ok");
             result.put("result", contactRepository.findDistinctGroupName());
         } else {
-            result.put("result", "token non valido");
+            result.put("message", "token non valido");
             result.put("status", "error");
         }
         return result;

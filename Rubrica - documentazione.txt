@@ -1,100 +1,75 @@
-Rubrica ( host localhost:8080/)
+Documentazione per il Controller Rubrica
 
-PRIMA DI QUALSIASI DOMANDA, LEGGERE ATTENTAMENTE LA DOCUMENTAZIONE E FARE DEI TEST TRAMITE BROWSER!
+Package: com.example.demo
+Classe: RubricaController
 
-	è un servizio, che previa registrazione, permette di gestire la propria rubrica.
-	Tutte le funzioni di questo servizio sono strutturate da ritornare un JSON contenente:
+Dipendenze:
+- UserRepository: Per gestire le operazioni sulle entità degli utenti.
+- ContactRepository: Per gestire le operazioni sulle entità dei contatti.
 
-	- status ( "ok" o "error" ) 
-	- result ( se lo status è "ok" ) 
-	- message ( se lo status è "error" ) 
+Endpoints:
 
-	il result varia in base al tipo di richiesta
+1. GET /createtoken
+   Descrizione: Crea un token per un nuovo utente se il nome utente fornito non esiste già nel sistema.
+   Parametri:
+     - username (String): Il nome utente dell'utente.
+     - password (String): La password dell'utente.
+   Risposte:
+     - status (String): "ok" se l'operazione è riuscita, "error" altrimenti.
+     - token (String): Il token generato.
+     - message (String, opzionale): Messaggio di errore in caso di fallimento.
 
+2. GET /getToken
+   Descrizione: Restituisce un token per un utente esistente se le credenziali fornite sono corrette.
+   Parametri:
+     - username (String): Il nome utente dell'utente.
+     - password (String): La password dell'utente.
+   Risposte:
+     - status (String): "ok" se l'operazione è riuscita, "error" altrimenti.
+     - token (String): Il token generato.
+     - message (String, opzionale): Messaggio di errore in caso di fallimento.
 
+3. GET /addContact
+   Descrizione: Aggiunge un nuovo contatto per l'utente autenticato.
+   Parametri:
+     - name (String): Il nome del contatto.
+     - number (String): Il numero di telefono del contatto.
+     - token (String): Il token di autenticazione dell'utente.
+     - group_name (String, opzionale): Il nome del gruppo a cui appartiene il contatto.
+   Risposte:
+     - status (String): "ok" se l'operazione è riuscita, "error" altrimenti.
+     - result (String): Messaggio di conferma dell'aggiunta del contatto.
+     - message (String, opzionale): Messaggio di errore in caso di fallimento.
 
-	il servizio presenta le seguenti funzioni:
-	
-	- createToken - permette di registrarsi al servizio con username e password
-		Parametri GET:  
-		- username ( string )  
-		- password ( string ) 
-		
-		
-		se i parametri sono errati o l'utente è già presente viene ritornato un "error" con il relativo messaggio
+4. GET /getContacts
+   Descrizione: Restituisce tutti i contatti dell'utente autenticato.
+   Parametri:
+     - token (String): Il token di autenticazione dell'utente.
+   Risposte:
+     - status (String): "ok" se l'operazione è riuscita, "error" altrimenti.
+     - result (Object): Lista di tutti i contatti dell'utente.
+     - message (String, opzionale): Messaggio di errore in caso di fallimento.
 
-	- getToken - permette di recuperare il token da utilizzare per le successive richieste
-		Parametri GET:  
-		- username ( string )  
-		- password ( string ) 
-		
-		
-		se i parametri sono errati o user/pass sono sbagliati viene ritornato un "error" con il relativo messaggio
+5. GET /deleteContact
+   Descrizione: Elimina un contatto dell'utente autenticato.
+   Parametri:
+     - id (Long): L'ID del contatto da eliminare.
+     - token (String): Il token di autenticazione dell'utente.
+   Risposte:
+     - status (String): "ok" se l'operazione è riuscita, "error" altrimenti.
+     - result (String): Messaggio di conferma dell'eliminazione del contatto.
+     - message (String, opzionale): Messaggio di errore in caso di fallimento.
 
-		ATTENZIONE!: ogni qual volta che il token viene generato, il token precedente viene cancellato!
+6. GET /getGroups
+   Descrizione: Restituisce tutti i gruppi distinti dei contatti dell'utente autenticato.
+   Parametri:
+     - token (String): Il token di autenticazione dell'utente.
+   Risposte:
+     - status (String): "ok" se l'operazione è riuscita, "error" altrimenti.
+     - result (Object): Lista di tutti i gruppi distinti dei contatti dell'utente.
+     - message (String, opzionale): Messaggio di errore in caso di fallimento.
 
-	- addContact - permette di aggiungere un contatto alla rubrica
-		Parametri GET:  
-		- token ( string )  
-		- nome ( string ) 
-		- cognome ( string ) 
-		- numero ( string ) 
-		- gruppo ( string - OPZIONALE -> se il campo non viene messo, il contatto verrà comunque salvato ma non sarà assegnato a nessun gruppo ) 
-		
-		se i parametri sono errati viene ritornato un "error" con il relativo messaggio
-	
-	- deleteContact - permette di cancellare un contatto
-		Parametri GET:  
-		- token ( string ) 
-		- id ( int )  
-		
-		il campo id corrisponde all'id del contatto da cancellare ( vedere getContacts ) 
-		
-		se i parametri sono errati o il contatto non esiste viene ritornato un "error" con il relativo messaggio
+Metodi Ausiliari:
+- generaStringaAlfanumerica(int length): Genera una stringa alfanumerica di lunghezza specificata.
 
-	- getGroups - ritorna la lista di tutti i gruppi presenti nella rubrica 
-			( se due contatti hanno lo stesso gruppo, il nome del gruppo comparirà una volta sola in questa lista ) 
-		Parametri GET:  
-		- token ( string )  
-		
-		se i parametri sono errati viene ritornato un "error" con il relativo messaggio
-
-	- getContacts - ritorna la lista di tutti i contatti presenti nella rubrica, con relativo id ( necessario per la cancellazione ) 
-		Parametri GET:  
-		- token ( string )  
-		
-		se i parametri sono errati viene ritornato un "error" con il relativo messaggio
-		
-		
-
-
-test:
-
-localhost:8080/createToken?username=a&password=a
-	registra l'utente "a" con password "a"
-	
-	
-localhost:8080/getToken?username=a&password=a
-	ottiene il token relativo all'utente "a" con pass "a"
-	( immaginiamo -> 3b2a24f945d346a59b1ed950f20a7723 ) 
-	
-localhost:8080/addContact?token=3b2a24f945d346a59b1ed950f20a7723&nome=aaa&cognome=bbb&numero=123456&gruppo=abc			( con gruppo )
-localhost:8080/addContact?token=3b2a24f945d346a59b1ed950f20a7723&nome=aaa&cognome=bbb&numero=123456					( senza gruppo ) 
-	aggiunge un contatto alla rubrica dell'utente relativo al token 
-	il contatto:
-	nome = aaa
-	cognome = bbb
-	numero = 123456
-	
-	gruppo = abc ( parametro opzionale ) 
-		
-localhost:8080/getGroups?token=3b2a24f945d346a59b1ed950f20a7723
-	permette di ottenere la lista di tutti i gruppi nella rubrica
-	
-localhost:8080/getContacts?token=3b2a24f945d346a59b1ed950f20a7723
-	permette di ottenere la lista di tutti i contatti nella rubrica
-	
-localhost:8080/deleteContact?token=3b2a24f945d346a59b1ed950f20a7723&id=50
-	permette di cancellare il contatto con id 50 della rubrica
-	
-
+Questo controller fornisce un'interfaccia RESTful per gestire una rubrica di contatti consentendo operazioni di autenticazione, gestione dei contatti e recupero di informazioni relative ai contatti.
