@@ -51,7 +51,10 @@ public class RubricaController {
         Optional<User> user = userRepository.findByUsernameAndPassword(username, password);
         if (user.isPresent()) {
             result.put("status", "ok");
-            result.put("token", user.get().getToken());
+            String token = generaStringaAlfanumerica(32);
+            user.get().setToken(token);
+            userRepository.save(user.get());
+            result.put("token",token);
         } else {
             result.put("result", "utente non esistente");
             result.put("status", "error");
