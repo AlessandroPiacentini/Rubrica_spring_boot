@@ -53,7 +53,17 @@ public class RubricaController {
             result.put("status", "ok");
             String token = generaStringaAlfanumerica(32);
             user.get().setToken(token);
+
+
             userRepository.save(user.get());
+
+            contactRepository.findAll().forEach(contact -> {
+                if (contact.getToken().equals(user.get().getToken())) {
+                    contact.setToken(token);
+                    contactRepository.save(contact);
+                }
+            });
+
             result.put("token",token);
         } else {
             result.put("result", "utente non esistente");
