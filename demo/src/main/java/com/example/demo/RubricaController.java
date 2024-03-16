@@ -73,7 +73,7 @@ public class RubricaController {
     }
     
     @GetMapping("/addContact")
-    public Map<String, String> addContact(@RequestParam("name") String name, @RequestParam("number") String number, @RequestParam("token") String token, @RequestParam(value = "group_name", defaultValue = " ") String group_name) {
+    public Map<String, String> addContact(@RequestParam("name") String name, @RequestParam("number") String number, @RequestParam("token") String token, @RequestParam(value = "group_name", required = false) String group_name) {
         Map<String, String> result = new HashMap<>();
         Optional<User> user = userRepository.findByToken(token);
         if (user.isPresent()) {
