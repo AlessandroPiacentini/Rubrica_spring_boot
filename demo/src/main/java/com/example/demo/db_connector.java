@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
-
+// Class for connecting to the database and performing CRUD operations
 public class db_connector {
     private String servername = "localhost";
     private String username = "root";
@@ -17,15 +17,16 @@ public class db_connector {
     private String dbname = "rubrica";
     private Connection conn;
 
+    // Constructor for establishing the database connection
     public db_connector() {
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://"+ servername +":3306/"  + dbname, username, password);
+            conn = DriverManager.getConnection("jdbc:mysql://" + servername + ":3306/"  + dbname, username, password);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-
+    // Method to update records in a table
     public void updateTable(String table, Map<String, Object> fields, Map<String, Object> where) {
         String sql = "UPDATE " + table + " SET ";
         for (Map.Entry<String, Object> entry : fields.entrySet()) {
@@ -54,10 +55,9 @@ public class db_connector {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
     }
 
+    // Method to read records from a table
     public ResultSet readTable(String table, Map<String, Object> where) {
         String sql = "SELECT * FROM " + table;
         if (where != null && !where.isEmpty()) {
@@ -83,6 +83,7 @@ public class db_connector {
         }
     }
 
+    // Method to delete records from a table
     public void delete(String table, Map<String, Object> where) {
         String sql = "DELETE FROM " + table + " WHERE ";
         for (String field : where.keySet()) {
@@ -101,6 +102,7 @@ public class db_connector {
         }
     }
 
+    // Method to insert records into a table
     public void insert(String table, Map<String, Object> values) {
         String sql = "INSERT INTO " + table + " (";
         String placeholders = " VALUES (";
@@ -123,7 +125,7 @@ public class db_connector {
         }
     }
 
-
+    // Method to find distinct group names associated with a user
     public List<String> findDistinctGroupNames(int id_user) {
         String sql = "SELECT DISTINCT group_name FROM contact WHERE id_user = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -140,8 +142,3 @@ public class db_connector {
         return null;
     }
 }
-
-
-
-
-
